@@ -1,0 +1,60 @@
+// Tempel kode ini ke https://dbdiagram.io/d untuk menghasilkan gambar ERD
+
+Table users {
+  id integer [pk, increment]
+  name varchar(100) [not null]
+  email varchar(150) [not null, unique]
+  phone varchar(20)
+  role varchar(20) [not null, default: 'customer']
+  created_at timestamptz [not null]
+}
+
+Table categories {
+  id integer [pk, increment]
+  name varchar(100) [not null, unique]
+  description text
+}
+
+Table services {
+  id integer [pk, increment]
+  category_id integer [not null, ref: > categories.id]
+  name varchar(150) [not null]
+  description text
+  price_per_unit numeric(12,2) [not null]
+  unit varchar(20) [not null, default: 'lembar']
+  is_active boolean [not null, default: true]
+}
+
+Table orders {
+  id integer [pk, increment]
+  user_id integer [not null, ref: > users.id]
+  status varchar(20) [not null, default: 'pending']
+  total_price numeric(12,2) [not null]
+  notes text
+  pickup_date date
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table order_items {
+  id integer [pk, increment]
+  order_id integer [not null, ref: > orders.id]
+  service_id integer [not null, ref: > services.id]
+  quantity integer [not null]
+  unit_price numeric(12,2) [not null]
+  subtotal numeric(12,2) [not null]
+  paper_size varchar(20)
+  color_mode varchar(20)
+  file_url text
+  notes text
+}
+
+Table payments {
+  id integer [pk, increment]
+  order_id integer [not null, ref: > orders.id]
+  amount numeric(12,2) [not null]
+  method varchar(20) [not null]
+  status varchar(20) [not null, default: 'pending']
+  paid_at timestamptz
+  created_at timestamptz [not null]
+}
